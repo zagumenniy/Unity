@@ -1,0 +1,93 @@
+SpeedTrigger.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class SpeedTrigger : MonoBehaviour
+{
+    public float speedFactor = 2.5f;
+ 
+    void OnTriggerEnter(Collider other)
+    {
+        //Увеличение скорости бега игрока
+        other.GetComponent<FirstPersonMovement>().runSpeed *= speedFactor;
+    }
+ 
+    void OnTriggerExit(Collider other)
+    {
+        //Уменьшение скорости бега игрока
+        other.GetComponent<FirstPersonMovement>().runSpeed /= speedFactor;
+    }
+}
+ 
+
+SceneChange.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor.SceneManagement;
+ 
+public class SceneChange : MonoBehaviour
+{
+    //Имя сцены, которую нужно перезапустить
+    public string sceneName;
+ 
+
+    void OnTriggerEnter( )
+    {
+         //Перезапуск сцены
+        EditorSceneManager.LoadScene(sceneName);
+    }
+}
+ 
+
+
+
+
+
+
+
+
+
+Trampoline.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class Trampoline : MonoBehaviour
+{
+    void OnTriggerEnter(Collider other)
+    {
+        //Увеличение силы прыжка
+        other.GetComponent<Jump>().jumpStrength = 10;
+ 
+    }
+ 
+    void OnTriggerExit(Collider other)
+    {
+        //Уменьшение силы прыжка
+        other.GetComponent<Jump>().jumpStrength = 2;
+ 
+    }
+}
+
+
+Teleport.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class Teleport : MonoBehaviour
+{
+    public Transform teleportPoint;
+ 
+    void OnTriggerEnter(Collider other)
+    {
+          //Меняет позицию игрока на позицию другого телепорта
+        other.transform.position = teleportPoint.position;
+    }
+}

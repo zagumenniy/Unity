@@ -1,0 +1,139 @@
+Player.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class Player : MonoBehaviour
+{
+    //Здоровье игрока
+    private int health = 10;
+ 
+    //Число собранных монет
+    private int coins;
+ 
+    //Префаб огненного шара и параметр Transform точки атаки
+    public GameObject fireballPrefab;
+    public Transform attackPoint;
+ 
+ 
+    //Метод, понижающий здоровье игрока
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        print("Здоровье игрока: " + health);
+    }
+ 
+    //Метод, увеличивающий число монеток
+    public void CollectCoins()
+    {
+        coins++;
+        print("Собранные монетки: " + coins);
+    }
+ 
+ 
+    void Update()
+    {
+ 
+        //Если игрок кликает левой кнопкой мыши, то создаётся огненный шар
+        if (Input.GetMouseButtonDown(0))
+        {
+            Instantiate(fireballPrefab, attackPoint.position, attackPoint.rotation);
+        }
+ 
+    }
+}
+
+
+Enemy.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class Enemy : MonoBehaviour
+{
+    //Скорость движения врага
+    public float speed;
+ 
+    //Цель, к которой движется враг
+    public Transform target;
+ 
+    //Очки урона от атаки врагом игрока
+    public int playerDamage = 2;
+ 
+ 
+    void Update()
+    {
+        //Меняет каждый кадр позицию NPC на новую
+        transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+ 
+        //Разворачивает каждый кадр NPC лицом к цели
+        transform.LookAt(target.position);
+    }
+ 
+    //При столкновении врага с игроком второму наносится урон
+    private void OnTriggerEnter(Collider other)
+    {
+        Player player = other.GetComponent<Player>();
+        player.TakeDamage(playerDamage);
+    }
+}
+
+
+Coin.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class Coin : MonoBehaviour
+{
+    void OnTriggerEnter(Collider other) {
+ 
+        Player player = other.GetComponent<Player>();
+ 
+        //Количество монеток обновляется
+        player.CollectCoins();
+ 
+        //Монетка, которую собрали, уничтожается
+        Destroy(gameObject);
+    }
+ 
+}
+
+
+Missile.cs
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ 
+public class Missile : MonoBehaviour
+{
+    //Скорость полёта огненного шара
+    public float speed;
+ 
+    void Update()
+    {
+       //Клон огненного шара уничтожается через 3 секунды
+        Destroy(gameObject, 3);
+
+          //Каждый кадр позиция шара обновляется на произведение вектора движения вперёд (0,0,1),
+        //скорости движения шара и значение разницы в секундах между последним и текущим кадрами
+
+        transform.position += transform.forward * speed * Time.deltaTime;
+    }
+ 
+    void OnTriggerEnter(Collider other) {
+ 
+        //Враг уничтожается
+        Enemy enemy = other.GetComponent<Enemy>();
+        Destroy(enemy.gameObject);
+ 
+        //Снаряд уничтожается
+        Destroy(gameObject);
+ 
+    }
+ 
+}
